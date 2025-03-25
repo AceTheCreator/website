@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "title": "AsyncAPI 3.0.0 schema.",
   "type": "object",
-  "required": ["asyncapi", "info"],
+  "required": ["asyncapi", "inf"],
   "additionalProperties": false,
   "patternProperties": {
     "^x-[\\w\\d\\.\\x2d_]+$": {
@@ -13,7 +13,7 @@
     "asyncapi": {
       "type": "string",
       "const": "3.0.0",
-      "description": "The AsyncAPI specification version of this document."
+      "description": "The AsyncAPI's specification version of this document."
     },
     "id": {
       "type": "string",
@@ -47,65 +47,72 @@
       "additionalItems": true
     },
     "info": {
-      "type": "object",
       "description": "The object provides metadata about the API. The metadata can be used by the clients if needed.",
-      "required": ["version", "title"],
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w\\d\\.\\x2d_]+$": {
-          "$ref": "#/definitions/specificationExtension"
-        }
-      },
-      "properties": {
-        "title": {
-          "type": "string",
-          "description": "A unique and precise title of the API."
-        },
-        "version": {
-          "type": "string",
-          "description": "A semantic version number of the API."
-        },
-        "description": {
-          "type": "string",
-          "description": "A longer description of the API. Should be different from the title. CommonMark is allowed."
-        },
-        "termsOfService": {
-          "type": "string",
-          "description": "A URL to the Terms of Service for the API. MUST be in the format of a URL.",
-          "format": "uri"
-        },
-        "contact": {
-          "$ref": "#/definitions/contact"
-        },
-        "license": {
-          "$ref": "#/definitions/license"
-        },
-        "tags": {
-          "type": "array",
-          "description": "A list of tags for application API documentation control. Tags can be used for logical grouping of applications.",
-          "items": {
-            "oneOf": [
-              {
-                "$ref": "#/definitions/Reference"
-              },
-              {
-                "$ref": "#/definitions/tag"
-              }
-            ]
-          },
-          "uniqueItems": true
-        },
-        "externalDocs": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/Reference"
-            },
-            {
-              "$ref": "#/definitions/externalDocs"
+      "allOf": [
+        {
+          "type": "object",
+          "required": ["version", "title"],
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x-[\\w\\d\\.\\x2d_]+$": {
+              "$ref": "#/definitions/specificationExtension"
             }
-          ]
+          },
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "A unique and precise title of the API."
+            },
+            "version": {
+              "type": "string",
+              "description": "A semantic version number of the API."
+            },
+            "description": {
+              "type": "string",
+              "description": "A longer description of the API. Should be different from the title. CommonMark is allowed."
+            },
+            "termsOfService": {
+              "type": "string",
+              "description": "A URL to the Terms of Service for the API. MUST be in the format of a URL.",
+              "format": "uri"
+            },
+            "contact": {
+              "$ref": "#/definitions/contact"
+            },
+            "license": {
+              "$ref": "#/definitions/license"
+            },
+            "tags": {
+              "type": "array",
+              "description": "A list of tags for application API documentation control. Tags can be used for logical grouping of applications.",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/Reference"
+                  },
+                  {
+                    "$ref": "#/definitions/tag"
+                  }
+                ]
+              },
+              "uniqueItems": true
+            },
+            "externalDocs": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/Reference"
+                },
+                {
+                  "$ref": "#/definitions/externalDocs"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/infoExtensions"
         }
-      },
+      ],
       "examples": [
         {
           "title": "AsyncAPI Sample App",
@@ -276,6 +283,32 @@
           "description": "Find more info here",
           "url": "https://example.com"
         }
+      ]
+    },
+    "infoExtensions": {
+      "type": "object",
+      "description": "The object that lists all the extensions of Info",
+      "properties": {
+        "x-x": {
+          "$ref": "#/definitions/extensions-x-0.1.0-schema"
+        },
+        "x-linkedin": {
+          "$ref": "#/definitions/extensions-linkedin-0.1.0-schema"
+        }
+      }
+    },
+    "extensions-x-0.1.0-schema": {
+      "type": "string",
+      "description": "This extension allows you to provide the Twitter username of the account representing the team/company of the API.",
+      "example": ["sambhavgupta75", "AsyncAPISpec"]
+    },
+    "extensions-linkedin-0.1.0-schema": {
+      "type": "string",
+      "pattern": "^http(s)?://(www\\.)?linkedin\\.com.*$",
+      "description": "This extension allows you to provide the Linkedin profile URL of the account representing the team/company of the API.",
+      "example": [
+        "https://www.linkedin.com/company/asyncapi/",
+        "https://www.linkedin.com/in/sambhavgupta0705/"
       ]
     },
     "servers": {
@@ -1098,7 +1131,7 @@
         "kafka": {
           "properties": {
             "bindingVersion": {
-              "enum": ["0.4.0", "0.3.0"]
+              "enum": ["0.5.0", "0.4.0", "0.3.0"]
             }
           },
           "allOf": [
@@ -1110,7 +1143,20 @@
                 }
               },
               "then": {
-                "$ref": "#/definitions/bindings-kafka-0.4.0-server"
+                "$ref": "#/definitions/bindings-kafka-0.5.0-server"
+              }
+            },
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.5.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-kafka-0.5.0-server"
               }
             },
             {
@@ -1216,7 +1262,7 @@
         "solace": {
           "properties": {
             "bindingVersion": {
-              "enum": ["0.3.0", "0.2.0"]
+              "enum": ["0.4.0", "0.3.0", "0.2.0"]
             }
           },
           "allOf": [
@@ -1228,7 +1274,20 @@
                 }
               },
               "then": {
-                "$ref": "#/definitions/bindings-solace-0.3.0-server"
+                "$ref": "#/definitions/bindings-solace-0.4.0-server"
+              }
+            },
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.4.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-solace-0.4.0-server"
               }
             },
             {
@@ -1741,6 +1800,39 @@
       },
       "default": true
     },
+    "bindings-kafka-0.5.0-server": {
+      "title": "Server Schema",
+      "description": "This object contains server connection information to a Kafka broker. This object contains additional information not possible to represent within the core AsyncAPI specification.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w\\d\\.\\x2d_]+$": {
+          "$ref": "#/definitions/specificationExtension"
+        }
+      },
+      "properties": {
+        "schemaRegistryUrl": {
+          "type": "string",
+          "description": "API URL for the Schema Registry used when producing Kafka messages (if a Schema Registry was used)."
+        },
+        "schemaRegistryVendor": {
+          "type": "string",
+          "description": "The vendor of the Schema Registry and Kafka serdes library that should be used."
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.5.0"],
+          "description": "The version of this binding."
+        }
+      },
+      "examples": [
+        {
+          "schemaRegistryUrl": "https://my-schema-registry.com",
+          "schemaRegistryVendor": "confluent",
+          "bindingVersion": "0.5.0"
+        }
+      ]
+    },
     "bindings-kafka-0.4.0-server": {
       "title": "Server Schema",
       "description": "This object contains server connection information to a Kafka broker. This object contains additional information not possible to represent within the core AsyncAPI specification.",
@@ -1826,7 +1918,7 @@
         "properties": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/bindings-jms-0.0.1-server"
+            "$ref": "#/definitions/bindings-jms-0.0.1-server/definitions/property"
           },
           "description": "Additional properties to set on the JMS ConnectionFactory implementation for the JMS Provider."
         },
@@ -1924,6 +2016,40 @@
         }
       ]
     },
+    "bindings-solace-0.4.0-server": {
+      "title": "Solace server bindings object",
+      "description": "This object contains server connection information about the Solace broker. This object contains additional connectivity information not possible to represent within the core AsyncAPI specification.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w\\d\\.\\x2d_]+$": {
+          "$ref": "#/definitions/specificationExtension"
+        }
+      },
+      "properties": {
+        "msgVpn": {
+          "type": "string",
+          "description": "The name of the Virtual Private Network to connect to on the Solace broker."
+        },
+        "clientName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "description": "A unique client name to use to register to the appliance. If specified, it must be a valid Topic name, and a maximum of 160 bytes in length when encoded as UTF-8."
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.4.0"],
+          "description": "The version of this binding."
+        }
+      },
+      "examples": [
+        {
+          "msgVpn": "ProdVPN",
+          "bindingVersion": "0.4.0"
+        }
+      ]
+    },
     "bindings-solace-0.3.0-server": {
       "title": "Solace server bindings object",
       "description": "This object contains server connection information about the Solace broker. This object contains additional connectivity information not possible to represent within the core AsyncAPI specification.",
@@ -2016,12 +2142,9 @@
           {
             "$ref": "#/definitions/Reference"
           },
-{
-  "$ref": "#/definitions/channel"
-}
-
-
-
+          {
+            "$ref": "#/definitions/channel"
+          }
         ]
       },
       "examples": [
@@ -2252,33 +2375,7 @@
           "type": "array",
           "description": "List of examples.",
           "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "anyOf": [
-              {
-                "required": ["payload"]
-              },
-              {
-                "required": ["headers"]
-              }
-            ],
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Machine readable name of the message example."
-              },
-              "summary": {
-                "type": "string",
-                "description": "A brief summary of the message example."
-              },
-              "headers": {
-                "type": "object",
-                "description": "Example of the application headers. It can be of any type."
-              },
-              "payload": {
-                "description": "Example of the message payload. It can be of any type."
-              }
-            }
+            "$ref": "#/definitions/messageExampleObject"
           }
         },
         "bindings": {
@@ -2412,6 +2509,12 @@
     },
     "multiFormatSchema": {
       "description": "The Multi Format Schema Object represents a schema definition. It differs from the Schema Object in that it supports multiple schema formats or languages (e.g., JSON Schema, Avro, etc.).",
+      "type": "object",
+      "patternProperties": {
+        "^x-[\\w\\d\\.\\x2d_]+$": {
+          "$ref": "#/definitions/specificationExtension"
+        }
+      },
       "if": {
         "not": {
           "type": "object"
@@ -2421,13 +2524,6 @@
         "$ref": "#/definitions/schema"
       },
       "else": {
-        "type": "object",
-        "additionalProperties": false,
-        "patternProperties": {
-          "^x-[\\w\\d\\.\\x2d_]+$": {
-            "$ref": "#/definitions/specificationExtension"
-          }
-        },
         "properties": {
           "schemaFormat": {
             "description": "A string containing the name of the schema format that is used to define the information. If schemaFormat is missing, it MUST default to application/vnd.aai.asyncapi+json;version={{asyncapi}} where {{asyncapi}} matches the AsyncAPI Version String. In such a case, this would make the Multi Format Schema Object equivalent to the Schema Object. When using Reference Object within the schema, the schemaFormat of the resource being referenced MUST match the schemaFormat of the schema that contains the initial reference. For example, if you reference Avro schema, then schemaFormat of referencing resource and the resource being reference MUST match.",
@@ -2458,9 +2554,6 @@
                 ]
               }
             ]
-          },
-          "schema": {
-            "description": "Definition of the message payload. It can be of any type but defaults to Schema Object. It MUST match the schema format defined in schemaFormat, including the encoding type. E.g., Avro should be inlined as either a YAML or JSON object instead of as a string to be parsed as YAML or JSON. Non-JSON-based schemas (e.g., Protobuf or XSD) MUST be inlined as a string."
           }
         },
         "allOf": [
@@ -2474,14 +2567,7 @@
             "then": {
               "properties": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/definitions/Reference"
-                    },
-                    {
-                      "$ref": "#/definitions/schema"
-                    }
-                  ]
+                  "$ref": "#/definitions/schema"
                 }
               }
             }
@@ -2524,14 +2610,7 @@
             "then": {
               "properties": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/definitions/Reference"
-                    },
-                    {
-                      "$ref": "#/definitions/schema"
-                    }
-                  ]
+                  "$ref": "#/definitions/schema"
                 }
               }
             }
@@ -2551,14 +2630,7 @@
             "then": {
               "properties": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/definitions/Reference"
-                    },
-                    {
-                      "$ref": "#/definitions/json-schema-draft-07-schema"
-                    }
-                  ]
+                  "$ref": "#/definitions/json-schema-draft-07-schema"
                 }
               }
             }
@@ -2611,12 +2683,9 @@
                     {
                       "$ref": "#/definitions/Reference"
                     },
-{
-  "$ref": "#/definitions/avroSchema_v1"
-}
-
-
-
+                    {
+                      "$ref": "#/definitions/avroSchema_v1"
+                    }
                   ]
                 }
               }
@@ -3214,6 +3283,36 @@
         }
       ]
     },
+    "messageExampleObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": ["payload"]
+        },
+        {
+          "required": ["headers"]
+        }
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Machine readable name of the message example."
+        },
+        "summary": {
+          "type": "string",
+          "description": "A brief summary of the message example."
+        },
+        "headers": {
+          "type": "object",
+          "description": "Example of the application headers. It MUST be a map of key-value pairs."
+        },
+        "payload": {
+          "type": ["number", "string", "boolean", "object", "array", "null"],
+          "description": "Example of the message payload. It can be of any type."
+        }
+      }
+    },
     "messageBindingsObject": {
       "type": "object",
       "description": "Map describing protocol-specific definitions for a message.",
@@ -3227,7 +3326,7 @@
         "http": {
           "properties": {
             "bindingVersion": {
-              "enum": ["0.2.0"]
+              "enum": ["0.2.0", "0.3.0"]
             }
           },
           "allOf": [
@@ -3239,7 +3338,7 @@
                 }
               },
               "then": {
-                "$ref": "#/definitions/bindings-http-0.2.0-message"
+                "$ref": "#/definitions/bindings-http-0.3.0-message"
               }
             },
             {
@@ -3253,6 +3352,19 @@
               },
               "then": {
                 "$ref": "#/definitions/bindings-http-0.2.0-message"
+              }
+            },
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.3.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-http-0.3.0-message"
               }
             }
           ]
@@ -3328,7 +3440,7 @@
         "kafka": {
           "properties": {
             "bindingVersion": {
-              "enum": ["0.4.0", "0.3.0"]
+              "enum": ["0.5.0", "0.4.0", "0.3.0"]
             }
           },
           "allOf": [
@@ -3340,7 +3452,20 @@
                 }
               },
               "then": {
-                "$ref": "#/definitions/bindings-kafka-0.4.0-message"
+                "$ref": "#/definitions/bindings-kafka-0.5.0-message"
+              }
+            },
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.5.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-kafka-0.5.0-message"
               }
             },
             {
@@ -3511,6 +3636,46 @@
         }
       }
     },
+    "bindings-http-0.3.0-message": {
+      "title": "HTTP message bindings object",
+      "description": "This object contains information about the message representation in HTTP.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w\\d\\.\\x2d_]+$": {
+          "$ref": "#/definitions/specificationExtension"
+        }
+      },
+      "properties": {
+        "headers": {
+          "$ref": "#/definitions/schema",
+          "description": "\tA Schema object containing the definitions for HTTP-specific headers. This schema MUST be of type 'object' and have a 'properties' key."
+        },
+        "statusCode": {
+          "type": "number",
+          "description": "The HTTP response status code according to [RFC 9110](https://httpwg.org/specs/rfc9110.html#overview.of.status.codes). `statusCode` is only relevant for messages referenced by the [Operation Reply Object](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationReplyObject), as it defines the status code for the response. In all other cases, this value can be safely ignored."
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.3.0"],
+          "description": "The version of this binding. If omitted, \"latest\" MUST be assumed."
+        }
+      },
+      "examples": [
+        {
+          "headers": {
+            "type": "object",
+            "properties": {
+              "Content-Type": {
+                "type": "string",
+                "enum": ["application/json"]
+              }
+            }
+          },
+          "bindingVersion": "0.3.0"
+        }
+      ]
+    },
     "bindings-http-0.2.0-message": {
       "title": "HTTP message bindings object",
       "description": "This object contains information about the message representation in HTTP.",
@@ -3649,7 +3814,7 @@
         }
       ]
     },
-    "bindings-kafka-0.4.0-message": {
+    "bindings-kafka-0.5.0-message": {
       "title": "Message Schema",
       "type": "object",
       "additionalProperties": false,
@@ -3666,6 +3831,70 @@
             },
             {
               "$ref": "#/definitions/schema"
+            }
+          ],
+          "description": "The message key."
+        },
+        "schemaIdLocation": {
+          "type": "string",
+          "description": "If a Schema Registry is used when performing this operation, tells where the id of schema is stored.",
+          "enum": ["header", "payload"]
+        },
+        "schemaIdPayloadEncoding": {
+          "type": "string",
+          "description": "Number of bytes or vendor specific values when schema id is encoded in payload."
+        },
+        "schemaLookupStrategy": {
+          "type": "string",
+          "description": "Freeform string for any naming strategy class to use. Clients should default to the vendor default if not supplied."
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.5.0"],
+          "description": "The version of this binding. If omitted, 'latest' MUST be assumed."
+        }
+      },
+      "examples": [
+        {
+          "key": {
+            "type": "string",
+            "enum": ["myKey"]
+          },
+          "schemaIdLocation": "payload",
+          "schemaIdPayloadEncoding": "apicurio-new",
+          "schemaLookupStrategy": "TopicIdStrategy",
+          "bindingVersion": "0.5.0"
+        },
+        {
+          "key": {
+            "$ref": "path/to/user-create.avsc#/UserCreate"
+          },
+          "schemaIdLocation": "payload",
+          "schemaIdPayloadEncoding": "4",
+          "bindingVersion": "0.5.0"
+        }
+      ]
+    },
+    "bindings-kafka-0.4.0-message": {
+      "title": "Message Schema",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w\\d\\.\\x2d_]+$": {
+          "$ref": "#/definitions/specificationExtension"
+        }
+      },
+      "properties": {
+        "key": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Reference"
+            },
+            {
+              "$ref": "#/definitions/schema"
+            },
+            {
+              "$ref": "#/definitions/avroSchema_v1"
             }
           ],
           "description": "The message key."
@@ -4073,7 +4302,7 @@
           "type": "array",
           "description": "List of examples.",
           "items": {
-            "type": "object"
+            "$ref": "#/definitions/messageExampleObject"
           }
         },
         "bindings": {
@@ -4228,20 +4457,19 @@
                 "$ref": "#/definitions/bindings-amqp-0.3.0-channel"
               }
             },
-{
-  "if": {
-    "required": ["bindingVersion"],
-    "properties": {
-      "bindingVersion": {
-        "const": "0.3.0"
-      }
-    }
-  },
-  "then": {
-    "$ref": "#/definitions/bindings-amqp-0.3.0-channel"
-  }
-}
-
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.3.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-amqp-0.3.0-channel"
+              }
+            }
           ]
         },
         "amqp1": {},
@@ -4249,7 +4477,7 @@
         "kafka": {
           "properties": {
             "bindingVersion": {
-              "enum": ["0.4.0", "0.3.0"]
+              "enum": ["0.5.0", "0.4.0", "0.3.0"]
             }
           },
           "allOf": [
@@ -4261,7 +4489,20 @@
                 }
               },
               "then": {
-                "$ref": "#/definitions/bindings-kafka-0.4.0-channel"
+                "$ref": "#/definitions/bindings-kafka-0.5.0-channel"
+              }
+            },
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.5.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-kafka-0.5.0-channel"
               }
             },
             {
@@ -4708,6 +4949,97 @@
         }
       ]
     },
+    "bindings-kafka-0.5.0-channel": {
+      "title": "Channel Schema",
+      "description": "This object contains information about the channel representation in Kafka.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w\\d\\.\\x2d_]+$": {
+          "$ref": "#/definitions/specificationExtension"
+        }
+      },
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "Kafka topic name if different from channel name."
+        },
+        "partitions": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of partitions configured on this topic."
+        },
+        "replicas": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of replicas configured on this topic."
+        },
+        "topicConfiguration": {
+          "description": "Topic configuration properties that are relevant for the API.",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "cleanup.policy": {
+              "description": "The [`cleanup.policy`](https://kafka.apache.org/documentation/#topicconfigs_cleanup.policy) configuration option.",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["compact", "delete"]
+              }
+            },
+            "retention.ms": {
+              "description": "The [`retention.ms`](https://kafka.apache.org/documentation/#topicconfigs_retention.ms) configuration option.",
+              "type": "integer",
+              "minimum": -1
+            },
+            "retention.bytes": {
+              "description": "The [`retention.bytes`](https://kafka.apache.org/documentation/#topicconfigs_retention.bytes) configuration option.",
+              "type": "integer",
+              "minimum": -1
+            },
+            "delete.retention.ms": {
+              "description": "The [`delete.retention.ms`](https://kafka.apache.org/documentation/#topicconfigs_delete.retention.ms) configuration option.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "max.message.bytes": {
+              "description": "The [`max.message.bytes`](https://kafka.apache.org/documentation/#topicconfigs_max.message.bytes) configuration option.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "confluent.key.schema.validation": {
+              "description": "It shows whether the schema validation for the message key is enabled. Vendor specific config. For more details: (https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html#confluent-key-schema-validation)",
+              "type": "boolean"
+            },
+            "confluent.key.subject.name.strategy": {
+              "description": "The name of the schema lookup strategy for the message key. Vendor specific config. For more details: (https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html#confluent-key-subject-name-strategy)",
+              "type": "string"
+            },
+            "confluent.value.schema.validation": {
+              "description": "It shows whether the schema validation for the message value is enabled. Vendor specific config. For more details: (https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html#confluent-value-schema-validation)",
+              "type": "boolean"
+            },
+            "confluent.value.subject.name.strategy": {
+              "description": "The name of the schema lookup strategy for the message value. Vendor specific config. For more details: (https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html#confluent-value-subject-name-strategy)",
+              "type": "string"
+            }
+          }
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.5.0"],
+          "description": "The version of this binding. If omitted, 'latest' MUST be assumed."
+        }
+      },
+      "examples": [
+        {
+          "topic": "my-specific-topic",
+          "partitions": 20,
+          "replicas": 3,
+          "bindingVersion": "0.5.0"
+        }
+      ]
+    },
     "bindings-kafka-0.4.0-channel": {
       "title": "Channel Schema",
       "description": "This object contains information about the channel representation in Kafka.",
@@ -4909,10 +5241,10 @@
           "description": "The name of the topic. Can be different from the channel name to allow flexibility around AWS resource naming limitations."
         },
         "ordering": {
-          "$ref": "#/definitions/bindings-sns-0.1.0-channel"
+          "$ref": "#/definitions/bindings-sns-0.1.0-channel/definitions/ordering"
         },
         "policy": {
-          "$ref": "#/definitions/bindings-sns-0.1.0-channel"
+          "$ref": "#/definitions/bindings-sns-0.1.0-channel/definitions/policy"
         },
         "tags": {
           "type": "object",
@@ -4960,7 +5292,7 @@
               "type": "array",
               "description": "An array of statement objects, each of which controls a permission for this topic",
               "items": {
-                "$ref": "#/definitions/bindings-sns-0.1.0-channel"
+                "$ref": "#/definitions/bindings-sns-0.1.0-channel/definitions/statement"
               }
             }
           },
@@ -5038,11 +5370,11 @@
       "properties": {
         "queue": {
           "description": "A definition of the queue that will be used as the channel.",
-          "$ref": "#/definitions/bindings-sqs-0.2.0-channel"
+          "$ref": "#/definitions/bindings-sqs-0.2.0-channel/definitions/queue"
         },
         "deadLetterQueue": {
           "description": "A definition of the queue that will be used for un-processable messages.",
-          "$ref": "#/definitions/bindings-sqs-0.2.0-channel"
+          "$ref": "#/definitions/bindings-sqs-0.2.0-channel/definitions/queue"
         },
         "bindingVersion": {
           "type": "string",
@@ -5110,10 +5442,10 @@
               "default": 345600
             },
             "redrivePolicy": {
-              "$ref": "#/definitions/bindings-sqs-0.2.0-channel"
+              "$ref": "#/definitions/bindings-sqs-0.2.0-channel/definitions/redrivePolicy"
             },
             "policy": {
-              "$ref": "#/definitions/bindings-sqs-0.2.0-channel"
+              "$ref": "#/definitions/bindings-sqs-0.2.0-channel/definitions/policy"
             },
             "tags": {
               "type": "object",
@@ -5132,7 +5464,7 @@
           },
           "properties": {
             "deadLetterQueue": {
-              "$ref": "#/definitions/bindings-sqs-0.2.0-channel"
+              "$ref": "#/definitions/bindings-sqs-0.2.0-channel/definitions/identifier"
             },
             "maxReceiveCount": {
               "type": "integer",
@@ -5174,7 +5506,7 @@
               "type": "array",
               "description": "An array of statement objects, each of which controls a permission for this queue.",
               "items": {
-                "$ref": "#/definitions/bindings-sqs-0.2.0-channel"
+                "$ref": "#/definitions/bindings-sqs-0.2.0-channel/definitions/statement"
               }
             }
           },
@@ -5868,7 +6200,7 @@
         "http": {
           "properties": {
             "bindingVersion": {
-              "enum": ["0.2.0"]
+              "enum": ["0.2.0", "0.3.0"]
             }
           },
           "allOf": [
@@ -5880,7 +6212,7 @@
                 }
               },
               "then": {
-                "$ref": "#/definitions/bindings-http-0.2.0-operation"
+                "$ref": "#/definitions/bindings-http-0.3.0-operation"
               }
             },
             {
@@ -5894,6 +6226,19 @@
               },
               "then": {
                 "$ref": "#/definitions/bindings-http-0.2.0-operation"
+              }
+            },
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.3.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-http-0.3.0-operation"
               }
             }
           ]
@@ -5969,7 +6314,7 @@
         "kafka": {
           "properties": {
             "bindingVersion": {
-              "enum": ["0.4.0", "0.3.0"]
+              "enum": ["0.5.0", "0.4.0", "0.3.0"]
             }
           },
           "allOf": [
@@ -5981,7 +6326,20 @@
                 }
               },
               "then": {
-                "$ref": "#/definitions/bindings-kafka-0.4.0-operation"
+                "$ref": "#/definitions/bindings-kafka-0.5.0-operation"
+              }
+            },
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.5.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-kafka-0.5.0-operation"
               }
             },
             {
@@ -6119,7 +6477,7 @@
         "solace": {
           "properties": {
             "bindingVersion": {
-              "enum": ["0.3.0", "0.2.0"]
+              "enum": ["0.4.0", "0.3.0", "0.2.0"]
             }
           },
           "allOf": [
@@ -6131,7 +6489,20 @@
                 }
               },
               "then": {
-                "$ref": "#/definitions/bindings-solace-0.3.0-operation"
+                "$ref": "#/definitions/bindings-solace-0.4.0-operation"
+              }
+            },
+            {
+              "if": {
+                "required": ["bindingVersion"],
+                "properties": {
+                  "bindingVersion": {
+                    "const": "0.4.0"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/bindings-solace-0.4.0-operation"
               }
             },
             {
@@ -6164,6 +6535,76 @@
         },
         "googlepubsub": {}
       }
+    },
+    "bindings-http-0.3.0-operation": {
+      "title": "HTTP operation bindings object",
+      "description": "This object contains information about the operation representation in HTTP.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w\\d\\.\\x2d_]+$": {
+          "$ref": "#/definitions/specificationExtension"
+        }
+      },
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "GET",
+            "PUT",
+            "POST",
+            "PATCH",
+            "DELETE",
+            "HEAD",
+            "OPTIONS",
+            "CONNECT",
+            "TRACE"
+          ],
+          "description": "When 'type' is 'request', this is the HTTP method, otherwise it MUST be ignored. Its value MUST be one of 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'CONNECT', and 'TRACE'."
+        },
+        "query": {
+          "$ref": "#/definitions/schema",
+          "description": "A Schema object containing the definitions for each query parameter. This schema MUST be of type 'object' and have a properties key."
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.3.0"],
+          "description": "The version of this binding. If omitted, 'latest' MUST be assumed."
+        }
+      },
+      "examples": [
+        {
+          "query": {
+            "type": "object",
+            "required": ["companyId"],
+            "properties": {
+              "companyId": {
+                "type": "number",
+                "minimum": 1,
+                "description": "The Id of the company."
+              }
+            },
+            "additionalProperties": false
+          },
+          "bindingVersion": "0.3.0"
+        },
+        {
+          "method": "GET",
+          "query": {
+            "type": "object",
+            "required": ["companyId"],
+            "properties": {
+              "companyId": {
+                "type": "number",
+                "minimum": 1,
+                "description": "The Id of the company."
+              }
+            },
+            "additionalProperties": false
+          },
+          "bindingVersion": "0.3.0"
+        }
+      ]
     },
     "bindings-http-0.2.0-operation": {
       "title": "HTTP operation bindings object",
@@ -6362,6 +6803,45 @@
         }
       ]
     },
+    "bindings-kafka-0.5.0-operation": {
+      "title": "Operation Schema",
+      "description": "This object contains information about the operation representation in Kafka.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w\\d\\.\\x2d_]+$": {
+          "$ref": "#/definitions/specificationExtension"
+        }
+      },
+      "properties": {
+        "groupId": {
+          "$ref": "#/definitions/schema",
+          "description": "Id of the consumer group."
+        },
+        "clientId": {
+          "$ref": "#/definitions/schema",
+          "description": "Id of the consumer inside a consumer group."
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.5.0"],
+          "description": "The version of this binding. If omitted, 'latest' MUST be assumed."
+        }
+      },
+      "examples": [
+        {
+          "groupId": {
+            "type": "string",
+            "enum": ["myGroupId"]
+          },
+          "clientId": {
+            "type": "string",
+            "enum": ["myClientId"]
+          },
+          "bindingVersion": "0.5.0"
+        }
+      ]
+    },
     "bindings-kafka-0.4.0-operation": {
       "title": "Operation Schema",
       "description": "This object contains information about the operation representation in Kafka.",
@@ -6481,19 +6961,19 @@
       },
       "properties": {
         "topic": {
-          "$ref": "#/definitions/bindings-sns-0.1.0-operation",
+          "$ref": "#/definitions/bindings-sns-0.1.0-operation/definitions/identifier",
           "description": "Often we can assume that the SNS Topic is the channel name-we provide this field in case the you need to supply the ARN, or the Topic name is not the channel name in the AsyncAPI document."
         },
         "consumers": {
           "type": "array",
           "description": "The protocols that listen to this topic and their endpoints.",
           "items": {
-            "$ref": "#/definitions/bindings-sns-0.1.0-operation"
+            "$ref": "#/definitions/bindings-sns-0.1.0-operation/definitions/consumer"
           },
           "minItems": 1
         },
         "deliveryPolicy": {
-          "$ref": "#/definitions/bindings-sns-0.1.0-operation",
+          "$ref": "#/definitions/bindings-sns-0.1.0-operation/definitions/deliveryPolicy",
           "description": "Policy for retries to HTTP. The field is the default for HTTP receivers of the SNS Topic which may be overridden by a specific consumer."
         },
         "bindingVersion": {
@@ -6559,7 +7039,7 @@
             },
             "endpoint": {
               "description": "The endpoint messages are delivered to.",
-              "$ref": "#/definitions/bindings-sns-0.1.0-operation"
+              "$ref": "#/definitions/bindings-sns-0.1.0-operation/definitions/identifier"
             },
             "filterPolicy": {
               "type": "object",
@@ -6597,10 +7077,10 @@
               "description": "If true AWS SNS attributes are removed from the body, and for SQS, SNS message attributes are copied to SQS message attributes. If false the SNS attributes are included in the body."
             },
             "redrivePolicy": {
-              "$ref": "#/definitions/bindings-sns-0.1.0-operation"
+              "$ref": "#/definitions/bindings-sns-0.1.0-operation/definitions/redrivePolicy"
             },
             "deliveryPolicy": {
-              "$ref": "#/definitions/bindings-sns-0.1.0-operation",
+              "$ref": "#/definitions/bindings-sns-0.1.0-operation/definitions/deliveryPolicy",
               "description": "Policy for retries to HTTP. The parameter is for that SNS Subscription and overrides any policy on the SNS Topic."
             },
             "displayName": {
@@ -6663,7 +7143,7 @@
           },
           "properties": {
             "deadLetterQueue": {
-              "$ref": "#/definitions/bindings-sns-0.1.0-operation",
+              "$ref": "#/definitions/bindings-sns-0.1.0-operation/definitions/identifier",
               "description": "The SQS queue to use as a dead letter queue (DLQ)."
             },
             "maxReceiveCount": {
@@ -6733,7 +7213,7 @@
           "type": "array",
           "description": "Queue objects that are either the endpoint for an SNS Operation Binding Object, or the deadLetterQueue of the SQS Operation Binding Object.",
           "items": {
-            "$ref": "#/definitions/bindings-sqs-0.2.0-operation"
+            "$ref": "#/definitions/bindings-sqs-0.2.0-operation/definitions/queue"
           }
         },
         "bindingVersion": {
@@ -6806,10 +7286,10 @@
               "default": 345600
             },
             "redrivePolicy": {
-              "$ref": "#/definitions/bindings-sqs-0.2.0-operation"
+              "$ref": "#/definitions/bindings-sqs-0.2.0-operation/definitions/redrivePolicy"
             },
             "policy": {
-              "$ref": "#/definitions/bindings-sqs-0.2.0-operation"
+              "$ref": "#/definitions/bindings-sqs-0.2.0-operation/definitions/policy"
             },
             "tags": {
               "type": "object",
@@ -6828,7 +7308,7 @@
           },
           "properties": {
             "deadLetterQueue": {
-              "$ref": "#/definitions/bindings-sqs-0.2.0-operation"
+              "$ref": "#/definitions/bindings-sqs-0.2.0-operation/definitions/identifier"
             },
             "maxReceiveCount": {
               "type": "integer",
@@ -6870,7 +7350,7 @@
               "type": "array",
               "description": "An array of statement objects, each of which controls a permission for this queue.",
               "items": {
-                "$ref": "#/definitions/bindings-sqs-0.2.0-operation"
+                "$ref": "#/definitions/bindings-sqs-0.2.0-operation/definitions/statement"
               }
             }
           },
@@ -6953,6 +7433,120 @@
         }
       ]
     },
+    "bindings-solace-0.4.0-operation": {
+      "title": "Solace operation bindings object",
+      "description": "This object contains information about the operation representation in Solace.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.4.0"],
+          "description": "The version of this binding. If omitted, \"latest\" MUST be assumed."
+        },
+        "destinations": {
+          "description": "The list of Solace destinations referenced in the operation.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "deliveryMode": {
+                "type": "string",
+                "enum": ["direct", "persistent"]
+              }
+            },
+            "oneOf": [
+              {
+                "properties": {
+                  "destinationType": {
+                    "type": "string",
+                    "const": "queue",
+                    "description": "If the type is queue, then the subscriber can bind to the queue. The queue subscribes to the given topicSubscriptions. If no topicSubscriptions are provied, the queue will subscribe to the topic as represented by the channel name."
+                  },
+                  "queue": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the queue"
+                      },
+                      "topicSubscriptions": {
+                        "type": "array",
+                        "description": "The list of topics that the queue subscribes to.",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "accessType": {
+                        "type": "string",
+                        "enum": ["exclusive", "nonexclusive"]
+                      },
+                      "maxTtl": {
+                        "type": "string",
+                        "description": "The maximum TTL to apply to messages to be spooled."
+                      },
+                      "maxMsgSpoolUsage": {
+                        "type": "string",
+                        "description": "The maximum amount of message spool that the given queue may use"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "destinationType": {
+                    "type": "string",
+                    "const": "topic",
+                    "description": "If the type is topic, then the subscriber subscribes to the given topicSubscriptions. If no topicSubscriptions are provided, the client will subscribe to the topic as represented by the channel name."
+                  },
+                  "topicSubscriptions": {
+                    "type": "array",
+                    "description": "The list of topics that the client subscribes to.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "timeToLive": {
+          "type": "integer",
+          "description": "Interval in milliseconds or a Schema Object containing the definition of the lifetime of the message."
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The valid priority value range is 0-255 with 0 as the lowest priority and 255 as the highest or a Schema Object containing the definition of the priority."
+        },
+        "dmqEligible": {
+          "type": "boolean",
+          "description": "Set the message to be eligible to be moved to a Dead Message Queue. The default value is false."
+        }
+      },
+      "examples": [
+        {
+          "bindingVersion": "0.4.0",
+          "destinations": [
+            {
+              "destinationType": "queue",
+              "queue": {
+                "name": "sampleQueue",
+                "topicSubscriptions": ["samples/*"],
+                "accessType": "nonexclusive"
+              }
+            },
+            {
+              "destinationType": "topic",
+              "topicSubscriptions": ["samples/*"]
+            }
+          ]
+        }
+      ]
+    },
     "bindings-solace-0.3.0-operation": {
       "title": "Solace operation bindings object",
       "description": "This object contains information about the operation representation in Solace.",
@@ -7026,12 +7620,12 @@
               }
             ]
           }
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.3.0"],
+          "description": "The version of this binding. If omitted, \"latest\" MUST be assumed."
         }
-      },
-      "bindingVersion": {
-        "type": "string",
-        "enum": ["0.3.0"],
-        "description": "The version of this binding. If omitted, \"latest\" MUST be assumed."
       },
       "examples": [
         {
@@ -7118,12 +7712,12 @@
               }
             ]
           }
+        },
+        "bindingVersion": {
+          "type": "string",
+          "enum": ["0.2.0"],
+          "description": "The version of this binding. If omitted, \"latest\" MUST be assumed."
         }
-      },
-      "bindingVersion": {
-        "type": "string",
-        "enum": ["0.2.0"],
-        "description": "The version of this binding. If omitted, \"latest\" MUST be assumed."
       },
       "examples": [
         {
@@ -7160,14 +7754,7 @@
           "description": "An object to hold reusable Schema Object. If this is a Schema Object, then the schemaFormat will be assumed to be 'application/vnd.aai.asyncapi+json;version=asyncapi' where the version is equal to the AsyncAPI Version String.",
           "patternProperties": {
             "^[\\w\\d\\.\\-_]+$": {
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/Reference"
-                },
-                {
-                  "$ref": "#/definitions/anySchema"
-                }
-              ]
+              "$ref": "#/definitions/anySchema"
             }
           }
         },
